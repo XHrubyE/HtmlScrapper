@@ -1,6 +1,8 @@
 package org.example;
 
 import org.example.anotation.ByClass;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -20,6 +22,15 @@ public class Main {
         }
 
         checkIfAnnotationsWork(PersonDemo.class);
+        try {
+            Document doc = Jsoup.connect("http://example.com/").get();
+            String title = doc.title();
+            System.out.println(title);
+        } catch (Exception ignored) {
+
+        }
+
+
     }
 
     private static void checkIfAnnotationsWork(Class<?> c) {
