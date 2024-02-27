@@ -1,11 +1,12 @@
 package org.example;
 
 import org.example.anotation.ByClass;
-import org.example.anotation.BySelector;
+import org.example.anotation.CssSelector;
 
+@CssSelector(key = "ipc-page-grid__item ipc-page-grid__item--span-2")
 public class PersonDemo {
     @ByClass(key = "primary")
     private String firstName;
-    @BySelector(key = "\"h3.r > div\"")
+    @CssSelector(key = "\"h3.r > div\"")
     private String lastName;
 }
