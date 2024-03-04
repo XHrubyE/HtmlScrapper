@@ -2,8 +2,6 @@ package org.example;
 
 import org.example.anotation.ByClass;
 import org.example.scrapper.ScrapperTemplate;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -13,14 +11,8 @@ public class MainDemo {
     public static void main(String[] args) {
         ScrapperTemplate template = new ScrapperTemplate();
 
-        PersonDemo person = template.scrapeData("https://www.imdb.com/search/title/?sort=user_rating,desc&groups=top_100", PersonDemo.class);
+        PersonDemo person = template.scrapeData("https://www.sheldonbrown.com/web_sample1.html", PersonDemo.class);
 
-//        try {
-//            Document doc = Jsoup.connect("http://example.com/").get();
-//            String title = doc.title();
-//            System.out.println(title);
-//        } catch (Exception ignored) {
-//        }
         System.out.println("break label");
     }
 
