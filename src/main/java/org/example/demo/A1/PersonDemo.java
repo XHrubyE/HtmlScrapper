@@ -1,6 +1,5 @@
-package org.example;
+package org.example.demo.A1;
 
-import org.example.anotation.ByClass;
 import org.example.anotation.CssSelector;
 import org.example.anotation.ElementSelector;
 
