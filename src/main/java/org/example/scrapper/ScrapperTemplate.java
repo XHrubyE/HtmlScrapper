@@ -8,6 +8,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -15,18 +16,19 @@ import java.util.List;
 
 public class ScrapperTemplate {
 
-    private Document document;
+    private Element documentBody;
 
     //TODO move all commonly used method parameter to class attributes for better access
     //TODO how to handle exceptions
     public <T> @NotNull T scrapeData(@NotNull String url, Class<T> clazz) {
         cleanBefore();
-        this.document = getDocumentFromUrl(url);
+        this.documentBody = getDocumentFromUrl(url).body();
+        processClassLevelSelector(clazz);
         return createAndFillObject(clazz);
     }
 
     private void cleanBefore() {
-        document = null;
+        documentBody = null;
     }
 
     private @NotNull Document getDocumentFromUrl(@NotNull String url) {
@@ -59,13 +61,7 @@ public class ScrapperTemplate {
                 } else if(field.getType() == Object.class) {
                     //TODO
                 } else {
-                    Element selectedElement = document.selectFirst(field.getAnnotation(CssSelector.class).key());
-                    if (selectedElement != null) {
-                        //TODO add for other types (Int,... etc.)
-                        if (field.getType() == String.class) {
-                            field.set(object, selectedElement.text());
-                        }
-                    }
+                    scrapeTypeValue(object, field);
                 }
             }
         } catch (Exception e) {
@@ -75,31 +71,31 @@ public class ScrapperTemplate {
 
     private void scrapeTypeList(Object object, Field field) throws IllegalAccessException {
         List<String> list = new ArrayList<>();
-        Elements selectedElements = document.select(field.getAnnotation(CssSelector.class).key());
+        Elements selectedElements = documentBody.select(field.getAnnotation(CssSelector.class).key());
         for (Element element : selectedElements) {
             list.add(element.text());
         }
         field.set(object, list);
     }
 
-    private void scrapeTypeValue(Object object, Field field) {
-
-
+    private void scrapeTypeValue(Object object, Field field) throws IllegalAccessException {
+        Element selectedElement = documentBody.selectFirst(field.getAnnotation(CssSelector.class).key());
+        if (selectedElement != null) {
+            //TODO add for other types (Int,... etc.)
+            if (field.getType() == String.class) {
+                field.set(object, selectedElement.text());
+            }
+        }
     }
 
     private void scrapeTypeObject(Object object, Field field) {
 
     }
 
-
-
-
-    private String getClassLevelSelector(Class<?> clazz) {
-        Annotation annotation = clazz.getDeclaredAnnotation(CssSelector.class);
-        //TODO throw error on multiple annotations collision
-        if (annotation != null) {
-            return annotation.toString();
+    private void processClassLevelSelector(Class<?> clazz) {
+        if (clazz.isAnnotationPresent(CssSelector.class)) {
+            CssSelector annotation = clazz.getAnnotation(CssSelector.class);
+            documentBody = documentBody.selectFirst(annotation.key());
         }
-        return "";
     }
 }

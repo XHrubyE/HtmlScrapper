@@ -6,6 +6,7 @@ import org.example.demo.A1.PersonDemo;
 
 import java.util.List;
 
+@CssSelector(key = "ul[role=presentation]")
 public class MovieListDemo {
     @CssSelector(key = ".ipc-title__text")
     private List<String> movies;
