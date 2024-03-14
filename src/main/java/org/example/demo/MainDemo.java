@@ -1,12 +1,9 @@
 package org.example.demo;
 
-import org.example.anotation.ByClass;
 import org.example.demo.A1.PersonDemo;
 import org.example.demo.A2.MovieListDemo;
 import org.example.scrapper.ScrapperTemplate;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 
 
 public class MainDemo {
