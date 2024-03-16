@@ -7,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface EntityAnotation { //TODO fix name
+public @interface ObjectSelector {
 }

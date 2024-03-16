@@ -1,6 +1,7 @@
 package org.example.scrapper;
 
 import org.example.anotation.CssSelector;
+import org.example.anotation.ObjectSelector;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -9,6 +10,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +48,13 @@ public class ScrapperTemplate {
         }
     }
 
+    private void processClassLevelSelector(Class<?> clazz) {
+        if (clazz.isAnnotationPresent(CssSelector.class)) {
+            CssSelector annotation = clazz.getAnnotation(CssSelector.class);
+            documentBody = documentBody.selectFirst(annotation.key());
+        }
+    }
+
     private <T> T createAndFillObject(Class<T> clazz) {
         try {
             T object = clazz.getConstructor().newInstance();
@@ -58,21 +67,27 @@ public class ScrapperTemplate {
         }
     }
 
-    private void scrapeAndSetField(Object object, Field field) {
-        try {
-            field.setAccessible(true);
-            if (field.isAnnotationPresent(CssSelector.class)) {
-                // check if String, Class, List etc..
-                if (List.class.isAssignableFrom(field.getType())) {
-                    scrapeTypeList(object, field);
-                } else if (field.getType() == Object.class) {
-                    //TODO
-                } else {
-                    scrapeTypeValue(object, field);
-                }
+    private void scrapeAndSetField(Object object, Field field) throws IllegalAccessException {
+        field.setAccessible(true);
+        if (field.isAnnotationPresent(CssSelector.class)) {
+            // check if String, Class, List etc..
+            if (List.class.isAssignableFrom(field.getType())) {
+                scrapeTypeList(object, field);
+            } else if (field.getType() == Object.class) {
+              //TODO remove
+
+
+
+
+            } else {
+                scrapeTypeValue(object, field);
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+        } else if (field.isAnnotationPresent(ObjectSelector.class)) {
+            try {
+                field.set(object, createAndFillObject(field.getType()));
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
         }
     }
 
@@ -104,14 +119,4 @@ public class ScrapperTemplate {
         }
     }
 
-    private void scrapeTypeObject(Object object, Field field) {
-
-    }
-
-    private void processClassLevelSelector(Class<?> clazz) {
-        if (clazz.isAnnotationPresent(CssSelector.class)) {
-            CssSelector annotation = clazz.getAnnotation(CssSelector.class);
-            documentBody = documentBody.selectFirst(annotation.key());
-        }
-    }
 }
