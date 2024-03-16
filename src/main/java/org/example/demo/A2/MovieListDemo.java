@@ -9,7 +9,7 @@ import java.util.List;
 @CssSelector(key = "ul[role=presentation]")
 public class MovieListDemo {
     @ObjectSelector
-    private MovieDemo movie;
-    @CssSelector(key = ".ipc-title__text")
-    private List<String> movies;
+    private List<MovieDemo> movies;
+//    @CssSelector(key = ".ipc-title__text")
+//    private List<String> movies;
 }

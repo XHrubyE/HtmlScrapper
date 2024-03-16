@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ElementSelector { //TODO maybe scrap
+public @interface EntitySelect { //TODO maybe scrap
     public String key();
 }

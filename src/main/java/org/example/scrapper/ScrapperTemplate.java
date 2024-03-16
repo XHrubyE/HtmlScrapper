@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -59,7 +60,7 @@ public class ScrapperTemplate {
         try {
             T object = clazz.getConstructor().newInstance();
             for (Field field : clazz.getDeclaredFields()) {
-                scrapeAndSetField(object, field);
+                scrapeAndSetField(documentBody, object, field);
             }
             return object;
         } catch (Exception e) {
@@ -67,27 +68,47 @@ public class ScrapperTemplate {
         }
     }
 
-    private void scrapeAndSetField(Object object, Field field) throws IllegalAccessException {
+    private <T> T createAndFillObject(Element element, Class<T> clazz) {
+        try {
+            T object = clazz.getConstructor().newInstance();
+            for (Field field : clazz.getDeclaredFields()) {
+                scrapeAndSetField(element, object, field);
+            }
+            return object;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private void scrapeAndSetField(Element element, Object object, Field field) throws IllegalAccessException {
         field.setAccessible(true);
         if (field.isAnnotationPresent(CssSelector.class)) {
             // check if String, Class, List etc..
             if (List.class.isAssignableFrom(field.getType())) {
                 scrapeTypeList(object, field);
             } else if (field.getType() == Object.class) {
-              //TODO remove
-
-
+                //TODO remove
 
 
             } else {
-                scrapeTypeValue(object, field);
+                scrapeTypeValue(element, object, field);
             }
         } else if (field.isAnnotationPresent(ObjectSelector.class)) {
             try {
-                field.set(object, createAndFillObject(field.getType()));
+                if (List.class.isAssignableFrom(field.getType())) {
+                    ParameterizedType t = (ParameterizedType) field.getGenericType();
+                    Type innerType = t.getActualTypeArguments()[0];
+
+                    System.out.println("brk");
+                    field.set(object, scrapeObjectsOfClass((Class) innerType));
+                } else {
+                    field.set(object, createAndFillObject(field.getType()));
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());
             }
+
+
         }
     }
 
@@ -105,14 +126,21 @@ public class ScrapperTemplate {
     }
 
     private <T> List<T> scrapeObjectsOfClass(Class<T> clazz) {
-
-        return Collections.emptyList(); //TODO remove
+        List<T> scrapedObjects = new ArrayList<>();
+        if (clazz.isAnnotationPresent(CssSelector.class)) { //TODO must be always present
+            CssSelector annotation = clazz.getAnnotation(CssSelector.class);
+            Elements elements = documentBody.select(annotation.key());
+            for (Element element : elements) {
+                scrapedObjects.add(createAndFillObject(element, clazz));
+            }
+        }
+        return scrapedObjects; //TODO remove
     }
 
-    private void scrapeTypeValue(Object object, Field field) throws IllegalAccessException {
-        Element selectedElement = documentBody.selectFirst(field.getAnnotation(CssSelector.class).key());
+    private void scrapeTypeValue(Element element, Object object, Field field) throws IllegalAccessException {
+        Element selectedElement = element.selectFirst(field.getAnnotation(CssSelector.class).key());
         if (selectedElement != null) {
-            //TODO add for other types (Int,... etc.)
+            //TODO add for other types (Integer, Time, etc.)
             if (field.getType() == String.class) {
                 field.set(object, selectedElement.text());
             }

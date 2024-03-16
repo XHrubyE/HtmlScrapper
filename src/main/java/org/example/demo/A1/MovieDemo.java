@@ -1,9 +1,8 @@
 package org.example.demo.A1;
 
 import org.example.anotation.CssSelector;
-import org.example.anotation.ElementSelector;
 
-@CssSelector(key = ".sc-b0691f29-0 jbYPfh cli-children")
+@CssSelector(key = ".sc-b0691f29-0.jbYPfh.cli-children")
 public class MovieDemo {
     @CssSelector(key = ".ipc-title__text")
     private String title;
