@@ -100,7 +100,7 @@ public class ScrapperTemplate {
                     Type innerType = t.getActualTypeArguments()[0];
 
                     System.out.println("brk");
-                    field.set(object, scrapeObjectsOfClass((Class) innerType));
+                    field.set(object, scrapeObjectsOfClass((Class<?>) innerType));
                 } else {
                     field.set(object, createAndFillObject(field.getType()));
                 }
