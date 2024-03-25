@@ -5,8 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface EntitySelect { //TODO maybe scrap
-    public String key();
+@Retention(RetentionPolicy.RUNTIME) //TODO check retention
+@Target({ElementType.FIELD, ElementType.TYPE})
+public @interface CssSelect {
+    String value();
 }
