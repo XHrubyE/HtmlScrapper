@@ -1,6 +1,6 @@
 package org.example.scrapper;
 
-import org.example.anotation.*;
+import org.example.anotations.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,14 +16,10 @@ import java.util.List;
 
 public class ScrapperTemplate {
 
-
-    //TODO move all commonly used method parameter to class attributes for better access
+    //TODO Annotation RunTimePolicy https://docs.oracle.com/javase/1.5.0/docs/api/java/lang/annotation/RetentionPolicy.html
     //TODO how to handle exceptions
-    //TODO selecting position (not first)
-    //TODO how many types to support
     //TODO tests
     //TODO check if constructor can cause a problem
-    //TODO annotation validity checks
     public <T> T scrapeData(String url, Class<T> clazz) {
         Document document = getDocumentFromUrl(url);
         return createAndFillObject(document.body(), clazz);
@@ -59,14 +55,14 @@ public class ScrapperTemplate {
     }
 
 
-
     private void processValueField(Element currentElement, Object object, Field field, AnnotationType type) throws IllegalAccessException {
         field.setAccessible(true);
         if (List.class.isAssignableFrom(field.getType())) {
-            field.set(object, null);
+            field.set(object, null); //TODO process value type list
         } else {
             String selector = getFieldAnnotationValue(field, type);
-            field.set(object, scrapeValueOfClass(currentElement, field.getType(), type, selector));
+            String pattern = AnnotationUtils.resolveDateTimePatternAnnotation(field);
+            field.set(object, scrapeValueOfClass(currentElement, field.getType(), type, selector, pattern));
         }
     }
 
@@ -74,7 +70,7 @@ public class ScrapperTemplate {
         return switch (type) {
             case CSS -> field.getAnnotation(CssSelect.class).value();
             case XPATH -> field.getAnnotation(XPathSelect.class).value();
-            default -> "";
+            default -> null;
         };
     }
 
@@ -104,23 +100,27 @@ public class ScrapperTemplate {
 
     private <T> List<T> scrapeListOfClass(Element currentElement, Class<T> clazz) {
         List<T> scrapedObjects = new ArrayList<>();
+        Elements elements = new Elements();
+
         if (clazz.isAnnotationPresent(CssSelect.class)) { //TODO must be always present
             CssSelect annotation = clazz.getAnnotation(CssSelect.class);
-            Elements elements = currentElement.select(annotation.value());
-            for (Element element : elements) {
-                scrapedObjects.add(createAndFillObject(element, clazz));
-            }
+            elements = currentElement.select(annotation.value());
+
+        } else if (clazz.isAnnotationPresent(XPathSelect.class)) {
+            XPathSelect annotation = clazz.getAnnotation(XPathSelect.class);
+            elements = currentElement.selectXpath(annotation.value());
+        }
+
+        for (Element element : elements) {
+            scrapedObjects.add(createAndFillObject(element, clazz));
         }
         return scrapedObjects; //TODO remove
     }
 
-    private Object scrapeValueOfClass(Element currentElement, Class<?> clazz, AnnotationType type, String selector) {
+    private Object scrapeValueOfClass(Element currentElement, Class<?> clazz, AnnotationType type, String selector, String pattern) {
         Element selectedElement = selectElement(currentElement, type, selector);
         if (selectedElement != null) {
-            //TODO add for other types (Integer, Time, etc.)
-            if (clazz == String.class) {
-                return selectedElement.text();
-            }
+            return ValueConverter.convertValue(selectedElement.text(), clazz, pattern);
         }
         return null;
     }
@@ -140,5 +140,8 @@ public class ScrapperTemplate {
     private Element selectElementWithXPath(Element currentElement, String xPathSelector) {
         return currentElement.selectXpath(xPathSelector).first(); //TODO possible NPE
     }
+
+    //TODO value converter
+
 
 }

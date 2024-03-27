@@ -1,4 +1,4 @@
-package org.example.anotation;
+package org.example.anotations;
 
 import java.lang.reflect.Field;
 
@@ -12,6 +12,14 @@ public class AnnotationUtils {
             return AnnotationType.OBJECT;
         } else {
             return AnnotationType.UNKNOWN;
+        }
+    }
+    
+    public static String resolveDateTimePatternAnnotation(Field field) {
+        if (field.isAnnotationPresent(DateTimePattern.class)) {
+            return field.getAnnotation(DateTimePattern.class).value();
+        } else {
+            return null;
         }
     }
 }

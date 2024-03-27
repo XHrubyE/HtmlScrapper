@@ -1,6 +1,6 @@
 package org.example.demo.A1;
 
-import org.example.anotation.XPathSelect;
+import org.example.anotations.XPathSelect;
 
 public class MovieInfoDemo {
     @XPathSelect("div[2]/span[1]")
