@@ -9,8 +9,6 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +35,7 @@ public class ScrapperTemplate {
         try {
             T object = clazz.getConstructor().newInstance();
             for (Field field : clazz.getDeclaredFields()) {
-                scrapeAndSetField(currentElement, object, field);
+                processAnnotationAndSetField(currentElement, object, field);
             }
             return object;
         } catch (Exception e) {
@@ -45,7 +43,7 @@ public class ScrapperTemplate {
         }
     }
 
-    private void scrapeAndSetField(Element currentElement, Object object, Field field) throws IllegalAccessException {
+    private void processAnnotationAndSetField(Element currentElement, Object object, Field field) throws IllegalAccessException {
         AnnotationType annotationType = AnnotationUtils.resolveFieldAnnotation(field);
         switch (annotationType) {
             case CSS -> processValueField(currentElement, object, field, AnnotationType.CSS);
@@ -57,67 +55,31 @@ public class ScrapperTemplate {
 
     private void processValueField(Element currentElement, Object object, Field field, AnnotationType type) throws IllegalAccessException {
         field.setAccessible(true);
-        if (List.class.isAssignableFrom(field.getType())) {
-            field.set(object, null); //TODO process value type list
+        String selector = AnnotationUtils.getFieldAnnotationValue(field, type);
+        String pattern = AnnotationUtils.resolveDateTimePatternAnnotation(field);
+        if (Utils.fieldIsOfTypeList(field)) {
+            field.set(object, findAndGetListOfValues(currentElement, Utils.getInnerTypeOfList(field), type, selector, pattern));
         } else {
-            String selector = getFieldAnnotationValue(field, type);
-            String pattern = AnnotationUtils.resolveDateTimePatternAnnotation(field);
-            field.set(object, scrapeValueOfClass(currentElement, field.getType(), type, selector, pattern));
+            field.set(object, findAndGetValue(currentElement, field.getType(), type, selector, pattern));
         }
     }
 
-    private String getFieldAnnotationValue(Field field, AnnotationType type) {
-        return switch (type) {
-            case CSS -> field.getAnnotation(CssSelect.class).value();
-            case XPATH -> field.getAnnotation(XPathSelect.class).value();
-            default -> null;
-        };
-    }
-
-    private void processObjectField(Element currentElement, Object object, Field field) throws IllegalAccessException {
-        field.setAccessible(true);
-        if (List.class.isAssignableFrom(field.getType())) {
-            ParameterizedType t = (ParameterizedType) field.getGenericType();
-            Type innerType = t.getActualTypeArguments()[0];
-            field.set(object, scrapeListOfClass(currentElement, (Class<?>) innerType));
-        } else {
-            field.set(object, createAndFillObject(currentElement, field.getType()));
-        }
-    }
-
-//    private void scrapeTypeList(Object object, Field field) throws IllegalAccessException {
-//        if (field.getGenericType() == Object.class) {
-////            scrapeObjectsOfClass(field.getGenericType().)
-//        } else {
-//            List<String> list = new ArrayList<>();
-//            Elements selectedElements = documentBody.select(field.getAnnotation(CssSelector.class).key());
-//            for (Element element : selectedElements) {
-//                list.add(element.text());
-//            }
-//            field.set(object, list);
-//        }
-//    }
-
-    private <T> List<T> scrapeListOfClass(Element currentElement, Class<T> clazz) {
-        List<T> scrapedObjects = new ArrayList<>();
+    private List<Object> findAndGetListOfValues(Element currentElement, Class<?> clazz, AnnotationType type, String selector, String pattern) {
+        List<Object> result = new ArrayList<>();
         Elements elements = new Elements();
 
-        if (clazz.isAnnotationPresent(CssSelect.class)) { //TODO must be always present
-            CssSelect annotation = clazz.getAnnotation(CssSelect.class);
-            elements = currentElement.select(annotation.value());
-
-        } else if (clazz.isAnnotationPresent(XPathSelect.class)) {
-            XPathSelect annotation = clazz.getAnnotation(XPathSelect.class);
-            elements = currentElement.selectXpath(annotation.value());
+        switch (type) {
+            case CSS -> elements = currentElement.select(selector);
+            case XPATH -> elements = currentElement.selectXpath(selector);
         }
 
         for (Element element : elements) {
-            scrapedObjects.add(createAndFillObject(element, clazz));
+            result.add(ValueConverter.convertValue(element.text(), clazz, pattern));
         }
-        return scrapedObjects; //TODO remove
+        return result;
     }
 
-    private Object scrapeValueOfClass(Element currentElement, Class<?> clazz, AnnotationType type, String selector, String pattern) {
+    private Object findAndGetValue(Element currentElement, Class<?> clazz, AnnotationType type, String selector, String pattern) {
         Element selectedElement = selectElement(currentElement, type, selector);
         if (selectedElement != null) {
             return ValueConverter.convertValue(selectedElement.text(), clazz, pattern);
@@ -141,7 +103,31 @@ public class ScrapperTemplate {
         return currentElement.selectXpath(xPathSelector).first(); //TODO possible NPE
     }
 
-    //TODO value converter
+    private void processObjectField(Element currentElement, Object object, Field field) throws IllegalAccessException {
+        field.setAccessible(true);
+        if (Utils.fieldIsOfTypeList(field)) {
+            field.set(object, findAndGetListOfObjects(currentElement, Utils.getInnerTypeOfList(field)));
+        } else {
+            field.set(object, createAndFillObject(currentElement, field.getType()));
+        }
+    }
 
+    private <T> List<T> findAndGetListOfObjects(Element currentElement, Class<T> clazz) {
+        List<T> result = new ArrayList<>();
+        Elements elements = new Elements();
 
+        if (clazz.isAnnotationPresent(CssSelect.class)) { //TODO must be always present
+            CssSelect annotation = clazz.getAnnotation(CssSelect.class);
+            elements = currentElement.select(annotation.value());
+
+        } else if (clazz.isAnnotationPresent(XPathSelect.class)) {
+            XPathSelect annotation = clazz.getAnnotation(XPathSelect.class);
+            elements = currentElement.selectXpath(annotation.value());
+        }
+
+        for (Element element : elements) {
+            result.add(createAndFillObject(element, clazz));
+        }
+        return result; //TODO remove
+    }
 }

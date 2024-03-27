@@ -14,7 +14,15 @@ public class AnnotationUtils {
             return AnnotationType.UNKNOWN;
         }
     }
-    
+
+    public static String getFieldAnnotationValue(Field field, AnnotationType type) {
+        return switch (type) {
+            case CSS -> field.getAnnotation(CssSelect.class).value();
+            case XPATH -> field.getAnnotation(XPathSelect.class).value();
+            default -> null;
+        };
+    }
+
     public static String resolveDateTimePatternAnnotation(Field field) {
         if (field.isAnnotationPresent(DateTimePattern.class)) {
             return field.getAnnotation(DateTimePattern.class).value();
