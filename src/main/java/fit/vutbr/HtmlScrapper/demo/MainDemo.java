@@ -10,9 +10,13 @@ public class MainDemo {
         ScrapperTemplate template = new ScrapperTemplateImpl();
 
 //        MovieListDemo movies = template.scrapeData("https://www.imdb.com/chart/top/", MovieListDemo.class);
+        try {
+            Ote ote = template.scrapeData("https://www.ote-cr.cz/cs/kratkodobe-trhy/elektrina/denni-trh?date=2024-03-27", Ote.class);
 
-        Ote ote = template.scrapeData("https://www.ote-cr.cz/cs/kratkodobe-trhy/elektrina/denni-trh?date=2024-03-27", Ote.class);
+            System.out.println("break label");
+        } catch (Exception e) {
+            System.out.println("ERROR");
+        }
 
-        System.out.println("break label");
     }
 }
