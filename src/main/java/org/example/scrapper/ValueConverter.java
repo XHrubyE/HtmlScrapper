@@ -6,24 +6,31 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class ValueConverter {
-    public static Object convertValue(String scrapedValue, Class<?> clazz, String pattern) {
+    /**
+     * Converts parsed value from document which is always elementary type String into other elementary type.
+     * @param parsedValue - parsed value
+     * @param clazz - which type to convert parsed value to
+     * @param pattern - additional information about format for Double and DateTime values
+     * @return converted value of type clazz
+     */
+    public static Object convertValue(String parsedValue, Class<?> clazz, String pattern) {
         if (clazz == String.class) {
-            return scrapedValue;
+            return parsedValue;
 
         } else if (clazz == Integer.class) {
-            return Integer.valueOf(scrapedValue); //TODO try
+            return Integer.valueOf(parsedValue); //TODO try
 
         } else if (clazz == Double.class) {
-            return Double.valueOf(scrapedValue.replaceAll("\\s+","").replaceAll(",", ".")); //TODO try
+            return Double.valueOf(parsedValue.replaceAll("\\s+","").replaceAll(",", ".")); //TODO try
 
         } else if (clazz == LocalDate.class) {
-            return pattern == null ? LocalDate.parse(scrapedValue) : LocalDate.parse(scrapedValue, DateTimeFormatter.ofPattern(pattern));
+            return pattern == null ? LocalDate.parse(parsedValue) : LocalDate.parse(parsedValue, DateTimeFormatter.ofPattern(pattern));
 
         } else if (clazz == LocalTime.class) {
-            return pattern == null ? LocalTime.parse(scrapedValue) : LocalTime.parse(scrapedValue, DateTimeFormatter.ofPattern(pattern));
+            return pattern == null ? LocalTime.parse(parsedValue) : LocalTime.parse(parsedValue, DateTimeFormatter.ofPattern(pattern));
 
         } else if (clazz == LocalDateTime.class) {
-            return pattern == null ? LocalDateTime.parse(scrapedValue) : LocalDateTime.parse(scrapedValue, DateTimeFormatter.ofPattern(pattern));
+            return pattern == null ? LocalDateTime.parse(parsedValue) : LocalDateTime.parse(parsedValue, DateTimeFormatter.ofPattern(pattern));
 
         } else {
             return null;

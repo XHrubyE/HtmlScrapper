@@ -8,7 +8,7 @@ import org.example.scrapper.ScrapperTemplate;
 
 public class MainDemo {
     public static void main(String[] args) {
-        ScrapperTemplate template = new ScrapperTemplate();
+        ScrapperTemplate template = new ScrapperTemplateImpl();
 
         MovieListDemo movies = template.scrapeData("https://www.imdb.com/chart/top/", MovieListDemo.class);
 
