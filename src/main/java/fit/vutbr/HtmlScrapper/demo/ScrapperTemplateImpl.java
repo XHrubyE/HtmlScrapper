@@ -1,6 +1,6 @@
-package org.example.demo;
+package fit.vutbr.HtmlScrapper.demo;
 
-import org.example.scrapper.ScrapperTemplate;
+import fit.vutbr.HtmlScrapper.scrapper.ScrapperTemplate;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 

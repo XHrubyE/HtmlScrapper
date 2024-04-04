@@ -1,7 +1,7 @@
-package org.example.demo.A1;
+package fit.vutbr.HtmlScrapper.demo.A1;
 
-import org.example.anotations.CssSelect;
-import org.example.anotations.ObjectSelect;
+import fit.vutbr.HtmlScrapper.anotations.CssSelect;
+import fit.vutbr.HtmlScrapper.anotations.ObjectSelect;
 
 @CssSelect(".sc-b0691f29-0.jbYPfh.cli-children")
 public class MovieDemo {

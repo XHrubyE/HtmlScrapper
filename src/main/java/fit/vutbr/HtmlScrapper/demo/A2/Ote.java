@@ -1,6 +1,6 @@
-package org.example.demo.A2;
+package fit.vutbr.HtmlScrapper.demo.A2;
 
-import org.example.anotations.ObjectSelect;
+import fit.vutbr.HtmlScrapper.anotations.ObjectSelect;
 
 import java.util.List;
 

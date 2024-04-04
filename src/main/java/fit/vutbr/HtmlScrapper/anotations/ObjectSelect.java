@@ -1,4 +1,4 @@
-package org.example.anotations;
+package fit.vutbr.HtmlScrapper.anotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

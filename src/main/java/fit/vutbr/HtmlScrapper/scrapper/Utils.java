@@ -1,4 +1,4 @@
-package org.example.scrapper;
+package fit.vutbr.HtmlScrapper.scrapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -24,5 +24,25 @@ public class Utils {
         ParameterizedType parameterizedType = (ParameterizedType)  listField.getGenericType();
         Type innerType = parameterizedType.getActualTypeArguments()[0];
         return (Class<?>) innerType;
+    }
+
+    /**
+     * Remove all white spaces from String
+     * @param value - value to remove white spaces from
+     * @return value without white spaces
+     */
+    public static String removeWhiteSpaces(String value) {
+        return value.replaceAll(" ", "");
+    }
+
+    /**
+     * Convert any double String into standard format, so it can be converted into Double object
+     * @param value - double value
+     * @return value in standard format
+     */
+    public static String convertDoubleToStandardFormat(String value) {
+        value = value.replaceAll("[^\\d,.]", "");  // Remove all unnecessary characters, such as white spaces and a thousand separators
+        value = value.replaceAll(",", ".");        // Replace comma decimal separator with dot
+        return value;
     }
 }

@@ -1,7 +1,7 @@
-package org.example.demo.A2;
+package fit.vutbr.HtmlScrapper.demo.A2;
 
-import org.example.anotations.CssSelect;
-import org.example.anotations.XPathSelect;
+import fit.vutbr.HtmlScrapper.anotations.CssSelect;
+import fit.vutbr.HtmlScrapper.anotations.XPathSelect;
 
 @XPathSelect("(//tbody)[2]/tr[position() <= 24]")
 public class ValuesPerHour {

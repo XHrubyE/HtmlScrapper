@@ -1,4 +1,4 @@
-package org.example.scrapper;
+package fit.vutbr.HtmlScrapper.scrapper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,10 +18,10 @@ public class ValueConverter {
             return parsedValue;
 
         } else if (clazz == Integer.class) {
-            return Integer.valueOf(parsedValue); //TODO try
+            return Integer.valueOf(Utils.removeWhiteSpaces(parsedValue));
 
         } else if (clazz == Double.class) {
-            return Double.valueOf(parsedValue.replaceAll("\\s+","").replaceAll(",", ".")); //TODO try
+            return Double.valueOf(Utils.convertDoubleToStandardFormat(parsedValue));
 
         } else if (clazz == LocalDate.class) {
             return pattern == null ? LocalDate.parse(parsedValue) : LocalDate.parse(parsedValue, DateTimeFormatter.ofPattern(pattern));

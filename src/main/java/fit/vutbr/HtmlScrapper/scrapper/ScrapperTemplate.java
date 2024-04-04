@@ -1,6 +1,10 @@
-package org.example.scrapper;
+package fit.vutbr.HtmlScrapper.scrapper;
 
-import org.example.anotations.*;
+import fit.vutbr.HtmlScrapper.anotations.AnnotationType;
+import fit.vutbr.HtmlScrapper.anotations.AnnotationUtils;
+import fit.vutbr.HtmlScrapper.anotations.CssSelect;
+import fit.vutbr.HtmlScrapper.anotations.XPathSelect;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
