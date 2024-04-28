@@ -1,4 +1,4 @@
-package fit.vutbr.HtmlScrapper.anotations;
+package fit.vutbr.HtmlScrapper.annotations;
 
 import java.lang.reflect.Field;
 

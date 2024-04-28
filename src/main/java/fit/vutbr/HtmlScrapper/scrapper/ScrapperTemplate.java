@@ -1,9 +1,9 @@
 package fit.vutbr.HtmlScrapper.scrapper;
 
-import fit.vutbr.HtmlScrapper.anotations.AnnotationType;
-import fit.vutbr.HtmlScrapper.anotations.AnnotationUtils;
-import fit.vutbr.HtmlScrapper.anotations.CssSelect;
-import fit.vutbr.HtmlScrapper.anotations.XPathSelect;
+import fit.vutbr.HtmlScrapper.annotations.AnnotationType;
+import fit.vutbr.HtmlScrapper.annotations.AnnotationUtils;
+import fit.vutbr.HtmlScrapper.annotations.CssSelect;
+import fit.vutbr.HtmlScrapper.annotations.XPathSelect;
 
 import fit.vutbr.HtmlScrapper.scrapper.exceptions.ScrapperTemplateException;
 import fit.vutbr.HtmlScrapper.scrapper.exceptions.ScrapperTemplateSourceDocumentDownloadException;

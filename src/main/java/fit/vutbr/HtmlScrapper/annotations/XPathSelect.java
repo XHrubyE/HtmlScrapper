@@ -1,4 +1,4 @@
-package fit.vutbr.HtmlScrapper.anotations;
+package fit.vutbr.HtmlScrapper.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME) //TODO check retention
 @Target({ElementType.FIELD, ElementType.TYPE})
-public @interface CssSelect {
+public @interface XPathSelect {
     String value();
 }

@@ -1,4 +1,4 @@
-package fit.vutbr.HtmlScrapper.anotations;
+package fit.vutbr.HtmlScrapper.annotations;
 
 public enum AnnotationType {
     CSS, XPATH, OBJECT

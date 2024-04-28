@@ -1,4 +1,4 @@
-package fit.vutbr.HtmlScrapper.anotations;
+package fit.vutbr.HtmlScrapper.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ObjectSelect {
+public @interface DateTimePattern {
+    String value();
 }
