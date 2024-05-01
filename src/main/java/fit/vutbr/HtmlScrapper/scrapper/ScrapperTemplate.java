@@ -19,14 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * This class contains logic that maps data from downloaded source document into specified objects
+ * that are described in clazz parameter of scrapeData() method.
  */
 public class ScrapperTemplate {
 
-    //TODO Annotation RunTimePolicy https://docs.oracle.com/javase/1.5.0/docs/api/java/lang/annotation/RetentionPolicy.html
-
     /**
-     * This method maps data from source document to object of specified class.
+     * This method is initial point of this library.
      *
      * @param url   - url of source document
      * @param clazz - contains information about which data should an object contain
@@ -79,7 +78,7 @@ public class ScrapperTemplate {
      * @param currentElement - element is found only in this part of the document
      * @param object         - object that is currently being processed
      * @param field          - which field of object is currently being processed
-     * @throws IllegalAccessException - //TODO
+     * @throws IllegalAccessException - trying to set the field value of the object can produce this exception
      */
     private void processAnnotationAndSetField(Element currentElement, Object object, Field field) throws IllegalAccessException, ScrapperTemplateException {
         AnnotationType annotationType = AnnotationUtils.resolveFieldAnnotation(field);
@@ -192,7 +191,7 @@ public class ScrapperTemplate {
      * @return element that was found or null otherwise
      */
     private Element selectElementWithXPath(Element currentElement, String xPathSelector) {
-        return currentElement.selectXpath(xPathSelector).first(); //TODO possible NPE
+        return currentElement.selectXpath(xPathSelector).first();
     }
 
 
@@ -223,7 +222,7 @@ public class ScrapperTemplate {
         List<T> result = new ArrayList<>();
         Elements elements = new Elements();
 
-        if (clazz.isAnnotationPresent(CssSelect.class)) { //TODO must be always present
+        if (clazz.isAnnotationPresent(CssSelect.class)) {
             CssSelect annotation = clazz.getAnnotation(CssSelect.class);
             elements = currentElement.select(annotation.value());
 
@@ -235,6 +234,6 @@ public class ScrapperTemplate {
         for (Element element : elements) {
             result.add(createAndFillObject(element, clazz));
         }
-        return result; //TODO remove
+        return result;
     }
 }
