@@ -55,8 +55,8 @@ public class ScrapperUtils {
      * @param attribute - attribute which we want to extract
      * @return value of attribute in html element
      */
-    public static String extractAttributeValue(String html, String attribute) {
+    public static String extractAttributeValue(String html, String element, String attribute) {
         Document doc = Jsoup.parse(html);
-        return doc.attr(attribute);
+        return doc.select(element).attr(attribute);
     }
 }
