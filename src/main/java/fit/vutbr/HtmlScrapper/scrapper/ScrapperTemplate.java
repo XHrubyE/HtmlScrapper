@@ -106,8 +106,8 @@ public class ScrapperTemplate {
         field.setAccessible(true);
         String selector = AnnotationUtils.getFieldAnnotationValue(field, type);
         String pattern = AnnotationUtils.resolveDateTimePatternAnnotation(field);
-        if (Utils.fieldIsOfTypeList(field)) {
-            field.set(object, findAndGetListOfValues(currentElement, Utils.getInnerTypeOfList(field), type, selector, pattern));
+        if (ScrapperUtils.fieldIsOfTypeList(field)) {
+            field.set(object, findAndGetListOfValues(currentElement, ScrapperUtils.getInnerTypeOfList(field), type, selector, pattern));
         } else {
             field.set(object, findAndGetValue(currentElement, field.getType(), type, selector, pattern));
         }
@@ -206,8 +206,8 @@ public class ScrapperTemplate {
      */
     private void processObjectField(Element currentElement, Object object, Field field) throws IllegalAccessException, ScrapperTemplateException {
         field.setAccessible(true);
-        if (Utils.fieldIsOfTypeList(field)) {
-            field.set(object, findAndGetListOfObjects(currentElement, Utils.getInnerTypeOfList(field)));
+        if (ScrapperUtils.fieldIsOfTypeList(field)) {
+            field.set(object, findAndGetListOfObjects(currentElement, ScrapperUtils.getInnerTypeOfList(field)));
         } else {
             field.set(object, createAndFillObject(currentElement, field.getType()));
         }

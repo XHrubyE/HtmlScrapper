@@ -1,11 +1,14 @@
 package fit.vutbr.HtmlScrapper.scrapper;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class Utils {
+public class ScrapperUtils {
     /**
      * Checks if this field is list type.
      * @param field - field which we want to check
@@ -44,5 +47,16 @@ public class Utils {
         value = value.replaceAll("[^\\d,.]", "");  // Remove all unnecessary characters, such as white spaces and a thousand separators
         value = value.replaceAll(",", ".");        // Replace comma decimal separator with dot
         return value;
+    }
+
+    /**
+     *  This function is used to extract attribute value from html element
+     * @param html - html of element we want to extract attribute from
+     * @param attribute - attribute which we want to extract
+     * @return value of attribute in html element
+     */
+    public static String extractAttributeValue(String html, String attribute) {
+        Document doc = Jsoup.parse(html);
+        return doc.attr(attribute);
     }
 }

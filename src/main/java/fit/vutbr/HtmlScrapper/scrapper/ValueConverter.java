@@ -18,10 +18,10 @@ public class ValueConverter {
             return parsedValue;
 
         } else if (clazz == Integer.class) {
-            return Integer.valueOf(Utils.removeWhiteSpaces(parsedValue));
+            return Integer.valueOf(ScrapperUtils.removeWhiteSpaces(parsedValue));
 
         } else if (clazz == Double.class) {
-            return Double.valueOf(Utils.convertDoubleToStandardFormat(parsedValue));
+            return Double.valueOf(ScrapperUtils.convertDoubleToStandardFormat(parsedValue));
 
         } else if (clazz == LocalDate.class) {
             return pattern == null ? LocalDate.parse(parsedValue) : LocalDate.parse(parsedValue, DateTimeFormatter.ofPattern(pattern));
