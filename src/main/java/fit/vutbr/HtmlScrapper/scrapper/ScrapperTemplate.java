@@ -133,7 +133,7 @@ public class ScrapperTemplate {
         }
 
         for (Element element : elements) {
-            result.add(ValueConverter.convertValue(element.text(), clazz, pattern));
+            result.add(ValueConverter.convertValue(element.html(), clazz, pattern));
         }
         return result;
     }
@@ -151,7 +151,7 @@ public class ScrapperTemplate {
     private Object findAndGetValue(Element currentElement, Class<?> clazz, AnnotationType type, String selector, String pattern) {
         Element selectedElement = selectElement(currentElement, type, selector);
         if (selectedElement != null) {
-            return ValueConverter.convertValue(selectedElement.text(), clazz, pattern);
+            return ValueConverter.convertValue(selectedElement.html(), clazz, pattern);
         }
         return null;
     }
